@@ -15,6 +15,7 @@ def update_stock_list():
 
 stock_db = pymongo.MongoClient(host='127.0.0.1', port=27017)
 stock_lists_collection = stock_db['stock_list']['cn']
+stock_daily_data = stock_db['stock_data']['cn']
 stock_lists = []
 
 
@@ -28,9 +29,22 @@ def save_to_mongo():
 def get_stock_list():
     documents = stock_lists_collection.find()
     for document in documents:
-        stock_lists.append(document.items())
+        stock_lists.append((document["number"], document["name"]))
 
             
-save_to_mongo()
+# save_to_mongo()
+
+
+get_stock_list()
+
+res_df = adata.stock.market.get_market(stock_code='920002', k_type=1, start_date='2022-07-01')
+print(res_df)
+stock_daily_data.delete_many({})
+
+data_s = stock_daily_data.find()
+for data in data_s:
+    print(data)
+#print(res_df)
+
 stock_db.close()
 
